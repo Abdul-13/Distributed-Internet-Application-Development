@@ -1,0 +1,44 @@
+h1 {
+  position: relative;
+  color: #275D38
+}
+
+.row {
+  position: relative;
+}
+
+.btn-outline-success {
+  color: #275D38
+}
+
+#leftEdge {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 200px;
+  background: #275D38
+}
+
+#rightEdge {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 200px;
+  background: #275D38
+}
+
+#mainContainer {
+  background: white
+}
+
+#backgroundDiv {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  background:white
+}

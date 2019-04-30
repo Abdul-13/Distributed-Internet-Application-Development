@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Game Lobby</title>
+
+    <!-- Bootstrap & Other CSS-->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+</head>
+<body>
+  <div class="jumbotron text-center">
+    <h1>WELCOME TO THE GAME LOBBY</h1>
+  </div>
+  
+  <br>
+  <div class="container">
+    <div class="row">
+      <h2 id="judgeURL"></h2>
+    </div>
+    <div class="row">
+      <br>
+      <h3>Enter the names of the players below. Left column is team 1, right column is team 2</h3>
+    </div>
+    <div class="row">
+        <form>
+        <br>
+        <div class="row">
+          <div class="col">
+            <input type="text" id="playerOneText" class="form-control" placeholder="Player 1">
+          </div>
+          <div class="col">
+            <input type="text" id="playerTwoText" class="form-control" placeholder="Player 2">
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col">
+            <input type="text" id="playerThreeText" class="form-control" placeholder="Player 3">
+          </div>
+          <div class="col">
+            <input type="text" id="playerFourText" class="form-control" placeholder="Player 4">
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col">
+            <input type="text" id="playerFiveText" class="form-control" placeholder="Player 5">
+          </div>
+          <div class="col">
+            <input type="text" id="playerSixText" class="form-control" placeholder="Player 6">
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col">
+            <input type="text" id="playerSevenText" class="form-control" placeholder="Player 7">
+          </div>
+          <div class="col">
+            <input type="text" id="playerEightText" class="form-control" placeholder="Player 8">
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col">
+            <a href="/tvView" role="button" id="startGameBtn" class="btn btn-success">Start Game</a>
+          </div>
+        </div>
+        </form>
+      </div>
+  </div>
+  
+  
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script> 
+      let socket = io()
+
+      $.getJSON('host', function(data) {
+        $('#judgeURL').html(`Judge go to <a href="/judge">${data.ipAddr}:5000/judge</a> on your device`)
+      })
+
+      $('#startGameBtn').click(function() {
+        let players = []
+        players.push($('#playerOneText').val())
+        players.push($('#playerTwoText').val())
+        players.push($('#playerThreeText').val())
+        players.push($('#playerFourText').val())
+        players.push($('#playerFiveText').val())
+        players.push($('#playerSixText').val())
+        players.push($('#playerSevenText').val())
+        players.push($('#playerEightText').val())
+
+        let teams = []
+
+        players.forEach(function(player, index) {
+          if ( player.name !== '') {
+            if (index % 2 === 0) {
+              p = { 
+                name: player,
+                team: 1
+              }
+              teams.push(p)
+            } else {
+              p = {
+                name: player,
+                team: 2
+              }
+              teams.push(p)
+            }
+          }
+        })
+        socket.emit('start game', teams)
+      })
+      
+    </script>
+</body>
+</html>

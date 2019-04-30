@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Subwords</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <style>
+    #app {
+      background-color: #275D38;
+    }
+
+    h1 {
+      color: #275D38;
+    }
+
+    h2 {
+      color: #275D38;
+    }
+
+    h3 {
+      color: #275D38;
+    }
+
+    span {
+      color: #275D38;
+      padding: 50px;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-content>
+        <v-container grid-list-xl text-xs-left>
+          <v-layout row wrap>
+            <v-flex xs12>
+              <v-card>
+                <v-card-text>
+                  <h1 class="display-4">Welcome to Subwords!</h1>
+                  <h2 class="display-3">Go to the following link on your mobile device or laptop</h2>
+                  <h3 class="display-1"><a :href=host>{{host}}</a></h3>
+                  <br>
+                  <h3 class="display-1">Enter your name in the name field</h3>
+                  <br>
+                  <h3 class="display-1">Enter this game room code: <span class="display-2">{{room}}</span></h3>
+                  <br>
+                  <h3 class="display-1">When all players are ready click the "Start Game" button below</h3>
+                  <br>
+                  <v-flex xs12>
+                    <h3 class="display-1">Ready Players</h3>
+                  </v-flex>
+                  <v-flex xs12>
+                    <div id=playersDiv></div>
+                  </v-flex>
+                  <div class="text-xs-center">
+                    <v-btn color="#275D38" dark href="subwords-tv" v-on:click="startGame">Start Game</v-btn>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-content>
+    </v-app>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    let socket = io()
+    let app = new Vue({
+      el: '#app',
+      data: {
+        host: '',
+        players: [],
+        room: 1234
+      },
+      methods: {
+        getHost: function() {
+          axios.get('/host')
+          .then(function(res) {
+            app.host = res.data.ipAddr+':5000/subwords-player'
+            app.startTimer()
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
+        },
+        createRoom: function() {
+          this.room = Math.floor(Math.random() * 9999)
+          socket.emit('player registered', {name: '{The Screen}', room: this.room})
+        },
+        startGame: function() {
+          socket.emit('subwords started', this.players, this.room)
+        }
+      }
+    })
+    app.getHost()
+    app.createRoom()
+
+    socket.on('player ready', function(name) {
+      let span = `<span class="display-1">${name}</span>`
+      let playerDiv = document.getElementById('playersDiv').innerHTML += span
+      app.players.push(name)
+    })
+  </script>
+</body>
+</html>

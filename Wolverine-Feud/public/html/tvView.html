@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>TV View Page</title>
+
+  </head>
+
+  <body>
+       
+  </div>
+    
+    <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.4/TweenMax.min.js'></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script  src="js/tvUI.js"></script> 
+    <script>
+      $('#gameboard').html(app)
+      let socket = io()
+      // socket.emit('get players')
+
+      socket.on('connect', function() {
+        socket.emit('get players')
+      })
+      
+      socket.on('giving players', function(gameState) {
+        console.log('giving players triggered')
+        console.log(gameState.currentQuestion.question)
+        app.init(gameState)
+        gameState.players.forEach(function(player, index) {
+          if (player.name !== '') {
+            $(`#player${index}Name`).val(player.name)
+          }
+        })
+      })
+
+      socket.on('broadcast new question', function(gameState) {
+        console.log('question: ' + gameState)
+        app.init(gameState)
+        gameState.players.forEach(function(player, index) {
+          if (player.name !== '') {
+            $(`#player${index}Name`).val(player.name)
+          }
+        })
+      })
+
+      socket.on('new card state', function(flipArray) {
+        let cards = $(document).find('.cardHolder').find('.card')
+        cards.each(function(index) {
+          let card = cards[index]
+          $(card).data('flipped', flipArray[index])
+        })
+
+        cards.each(function(index) {
+          let card = cards[index]
+          app.showCard(card)
+        })
+      })
+
+      socket.on('points awarded', function(teamNum) {
+        app.awardPoints(teamNum)
+      })
+
+    </script>
+  </body>
+</html>

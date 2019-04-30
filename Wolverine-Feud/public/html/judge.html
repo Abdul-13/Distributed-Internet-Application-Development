@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>judge Page</title>
+
+  </head>
+
+  <body>
+    
+    <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.4/TweenMax.min.js'></script>
+    <script  src="js/judgeUI.js"></script> 
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      let socket = io()
+
+      $(document).on('click', '#newQuestion', function() {
+        socket.emit('new question', app.questions[app.currentQ])
+      })
+
+      $(document).on('click', '.card', function() {
+        let cards = $(document).find('.cardHolder').find('.card')
+        let flipped = []
+        cards.each(function(index) {
+          let card = cards[index]
+          flipped.push($(card).data('flipped'))
+        })
+
+        socket.emit('new card state', flipped)
+      })
+
+      $(document).on('click', '#awardTeam1', function() {
+        socket.emit('award points', 1)
+      })
+
+      $(document).on('click', '#awardTeam2', function() {
+        socket.emit('award points', 2)
+      })
+    </script>
+  </body>
+</html>

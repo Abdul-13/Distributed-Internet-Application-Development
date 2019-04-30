@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Subwords Player</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <style>
+      #app {
+        background-color: #275D38;
+      }
+
+      #timerSpan {
+        color: #8E8C89;
+      }
+    </style>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-content>
+        <v-container grid-list-xl class="text-xs-center">
+          <v-layout row wrap align-center justify-center fill-height>
+            <v-flex xs12>
+              <span class="display-1" id="timerSpan">{{ timer }}</span>
+            </v-flex>
+            <v-flex xs8>
+              <v-card>
+                <h2 class="title" style="color: #275D38"> {{ currentWord.word }}</h2>
+              </v-card>
+            </v-flex>
+            <v-flex xs8>
+              <v-text-field class="title" v-model="guess" id="guessTxtField" color="#8E8C89" dark box placeholder="Type Here" :value="guess" v-on:keyup.enter="guessWord"></v-text-field>
+            </v-flex>
+          </v-layout>
+          <v-layout row wrap align-center justify-center fill-height>
+            <v-flex xs2>
+              <v-btn dark color="#8E8C89" v-on:click="guessWord">Guess</v-btn>
+            </v-flex>
+          </v-layout>
+          <template>
+            <v-layout row wrap align-center justify-center fill-height>
+              <v-dialog v-model="dialog" scrollable width= 500 transition="dialog-transition" persistent> 
+                <v-card>
+                  <v-flex xs12>
+                    <v-text-field solo name="playerName" style="padding-top: 20px;" v-model="name" placeholder="Player Name" :value=name></v-text-field>
+                    <v-text-field solo name="gameRoom" v-model="room" placeholder="Game Room Code" :value=room></v-text-field>
+                    <div class="text-xs-center">
+                        <v-btn color="success" v-on:click="playerReady">Submit</v-btn>
+                    </div>
+                  </v-flex>
+                </v-card>
+              </v-dialog>
+            </v-layout>
+          </template>
+        </v-container>
+      </v-content>
+    </v-app>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    let socket = io()
+    let app = new Vue({
+      el:'#app',
+      data: {
+        room: '',
+        name: '',
+        dialog: true,
+        timer: 30,
+        guess: '',
+        timoutId: '',
+        currentWord: { 
+          word: 'game starting soon',
+          subwords: []
+        }
+      },
+      methods: {
+        guessWord: function() {
+          if (this.guess !== '') {
+            this.guess = this.guess.toLowerCase()
+            socket.emit('guess subword', this.room, this.name, this.guess, this.currentWord)
+            this.guess = ''
+          }
+        },
+        startTimer: function() {
+          if (this.timer > 0) {
+            app.timoutId = setTimeout(function() {
+              app.timer -= 1
+              app.startTimer()
+            }, 1000)
+          } else {
+            this.timer = 30
+            this.startTimer()
+          }
+        },
+        playerReady() {
+          if (this.name !== '' && this.room !== '') {
+            this.dialog = false
+            socket.emit('player registered', {name: this.name, room: this.room})
+          }
+        }
+      }
+    })
+
+    socket.on('new word sent', function(word) {
+      app.currentWord = word
+      clearTimeout(app.timoutId)
+      app.startTimer()
+      app.guessWord()
+    })
+  </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <title>Subwords Main Screen</title>
+  <style>
+    #app {
+      background-color: #275D38;
+    }
+
+    #playerName {
+      color: #275D38;
+    }
+
+    #wordText {
+      color: #FFFFFF/*#8E8C89; */
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <v-app>
+      <v-content>
+        <v-container>
+          <v-layout justify-center row fill-height>
+            <div>
+              <v-flex xs12>
+                <h1 class="display-4" style="color: #8E8C89;"> {{ timer }} </h1>
+              </v-flex>
+            </div>
+          </v-layout>
+
+        </v-container>
+        <v-container>
+          <v-layout align-space-around justify-space-around row fill-height>
+
+            <div>
+                <h1 id="wordText">
+                    Players:
+                  </h1>
+                  <br>
+              <div v-for="player in players">
+              <v-card  min-width=200>
+                <v-card-text id="playerName">
+                  {{ player.name }}
+                  .....
+                  <v-badge color="#275D38">
+                      <template v-slot:badge>
+                        {{ player.score }}
+                      </template>
+                    </v-badge>
+                </v-card-text> 
+              </v-card>
+              <br>
+            </div>
+            </div>
+
+            <v-container>
+              <v-layout text-xs-center wrap>
+
+                <v-flex mb-4>
+                  <h1 class="display-2 font-weight-bold mb-3" id="wordText">
+                    Subwords of: {{mainWord.word}}
+                  </h1>
+                </v-flex>
+
+                <v-flex mb-5 xs12>
+                  <h2 v-for="(subword, index) in guessedWords" class="headline font-weight-bold mb-3" style="color: #ffffff">
+                      {{ subword }}
+                  </h2>
+                </v-flex>
+
+
+              </v-layout>
+            </v-container>
+
+          </v-layout>
+        </v-container>
+      </v-content>
+    </v-app>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  let socket = io()
+  var app = new Vue({
+    el: '#app',
+    data: {
+      players: [],
+      mainWord: {
+        word: 'good',
+        subwords: []
+      },
+      guessedWords: [],
+      timer: 30,
+      room: 1234,
+    },
+    methods: {
+      blanks: function (length) {
+        let ret = ''
+        for (let index = 0; index < length; index++) {
+          ret += ' __'       
+        }
+        return ret
+      },
+      startTimer: function() {
+        if (this.timer > 0) {
+          setTimeout(function() {
+            app.timer -= 1
+            app.startTimer()
+          }, 1000)
+        } else {
+          this.timer = 30
+          this.newWord()
+        }
+      },
+      newWord: function() {
+        axios.get('/new-word')
+        .then(function(wordObject) {
+          app.mainWord.word = wordObject.data.word
+          app.mainWord.subwords = wordObject.data.subwords
+          socket.emit('new word', app.room, app.mainWord)
+          app.startTimer()
+          app.guessedWords = []
+        })
+        .catch(function(error) {
+            console.log(error)
+          })
+      },
+      newGame: function() {
+        axios.get('/last-room')
+        .then(function(resp) {
+          app.room = resp.data.room
+          let pArray = resp.data.players
+          pArray.forEach(function(name) {
+            app.players.push({name: name, score: 0})
+          })
+          socket.emit('player registered', {name: '{tv-scree}', room: app.room})
+        })
+        .catch(function(err) {
+          console.log(err)
+        })
+      }
+    }
+  })
+  app.newGame()
+  app.newWord()
+
+  socket.on('players incoming', function(players) {
+    players.forEach(function(player) {
+      app.players.push({name: player, score: 0})
+    })
+  })
+
+  socket.on('correct guess', function(player, points, subword) {
+    if (!app.guessedWords.includes(subword)) {
+      app.players.forEach(function(element) {
+        if (element.name === player) {
+          element.score += points
+          app.guessedWords.push(subword)
+        }
+      })
+    }
+  })
+</script>
+</body>
+</html> 

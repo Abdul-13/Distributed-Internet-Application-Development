@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>Admin Page</title>
+
+  <!-- Bootstrap -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Page</h1>
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+      <input class="btn-group mr-4" id="searchText" type="text" placeholder="Search String">
+      <div class="btn-group mr-2" role="group" aria-label="First group">
+        <button type="button" class="btn btn-secondary" id="searchButton">SEARCH</button>
+      </div>
+      <div class="btn-group mr-2" role="group" aria-label="Second group">
+        <button type="button" id="resetTable" class="btn btn-secondary" data-toggle="modal">REFRESH TABLE</button>
+      </div>
+      <div class="btn-group mr-2" role="group" aria-label="Second group">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createQuestionModal">CREATE</button>
+      </div>
+    </div>
+    <div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">QUESTION TEXT</th>
+          </tr>
+        </thead>
+        <tbody id='questionTableBody'>
+        </tbody>
+      </table>
+    </div>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item" id="previousPage"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item" id="nextPage"><a class="page-link" href="#">Next</a></li>
+      </ul>
+    </nav>
+  </div> <!-- End main container -->
+
+<!-- Update Question Modal -->
+<div class="modal fade bd-example-modal-lg" id="updateQuestionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update Question</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="questionText" class="col-form-label">Question</label>
+            <textarea class="form-control" id="questionText"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="answer1" class="col-form-label">Answer1</label>
+              <input type="text" class="form-control" id="answer1">
+            </div>
+            <div class="col">
+              <label for="value1" class="col-form-label">Value1</label>
+              <input type="text" class="form-control" id="value1">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="answer2" class="col-form-label">Answer2</label>
+              <input type="text" class="form-control" id="answer2" >
+            </div>
+            <div class="col">
+              <label for="value2" class="col-form-label">Value2</label>
+              <input type="text" class="form-control" id="value2">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="answer3" class="col-form-label">Answer3</label>
+              <input type="text" class="form-control" id="answer3">
+            </div>
+            <div class="col">
+              <label for="value3" class="col-form-label">Value3</label>
+              <input type="text" class="form-control" id="value3">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="answer4" class="col-form-label">Answer4</label>
+              <input type="text" class="form-control" id="answer4">
+            </div>
+            <div class="col">
+              <label for="value4" class="col-form-label">Value4</label>
+              <input type="text" class="form-control" id="value4">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="answer5" class="col-form-label">Answer5</label>
+              <input type="text" class="form-control" id="answer5">
+            </div>
+            <div class="col">
+              <label for="value5" class="col-form-label">Value5</label>
+              <input type="text" class="form-control" id="value5">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="answer6" class="col-form-label">Answer6</label>
+              <input type="text" class="form-control" id="answer6">
+            </div>
+            <div class="col">
+              <label for="value6" class="col-form-label">Value6</label>
+              <input type="text" class="form-control" id="value6">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="answer7" class="col-form-label">Answer7</label>
+              <input type="text" class="form-control" id="answer7">
+            </div>
+            <div class="col">
+              <label for="value7" class="col-form-label">Value7</label>
+              <input type="text" class="form-control" id="value7">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="deleteBtn" class="btn btn-danger" data-dismiss="modal">Delete</button>
+        <button type="button" class="btn btn-primary" id="updateSaveQuestionBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Question Modal -->
+<div class="modal fade bd-example-modal-lg" id="createQuestionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Question</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="createQuestionText" class="col-form-label">Question</label>
+            <textarea class="form-control" id="createQuestionText" placeholder="Enter Question Text Here"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="createAnswer1" class="col-form-label">Answer1</label>
+              <input type="text" class="form-control" id="createAnswer1" placeholder="Answer Text">
+            </div>
+            <div class="col">
+              <label for="createValue1" class="col-form-label">Value1</label>
+              <input type="text" class="form-control" id="createValue1" placeholder="Number of Responses">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="createAnswer2" class="col-form-label">Answer2</label>
+              <input type="text" class="form-control" id="createAnswer2" placeholder="Answer Text">
+            </div>
+            <div class="col">
+              <label for="createValue2" class="col-form-label">Value2</label>
+              <input type="text" class="form-control" id="createValue2" placeholder="Number of Responses">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="createAnswer3" class="col-form-label">Answer3</label>
+              <input type="text" class="form-control" id="createAnswer3" placeholder="Answer Text">
+            </div>
+            <div class="col">
+              <label for="createValue3" class="col-form-label">Value3</label>
+              <input type="text" class="form-control" id="createValue3" placeholder="Number of Responses">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="createAnswer4" class="col-form-label">Answer4</label>
+              <input type="text" class="form-control" id="createAnswer4" placeholder="Answer Text">
+            </div>
+            <div class="col">
+              <label for="createValue4" class="col-form-label">Value4</label>
+              <input type="text" class="form-control" id="createValue4" placeholder="Number of Responses">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="createAnswer5" class="col-form-label">Answer5</label>
+              <input type="text" class="form-control" id="createAnswer5" placeholder="Answer Text">
+            </div>
+            <div class="col">
+              <label for="createValue5" class="col-form-label">Value5</label>
+              <input type="text" class="form-control" id="createValue5" placeholder="Number of Responses">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="createAnswer6" class="col-form-label">Answer6</label>
+              <input type="text" class="form-control" id="createAnswer6" placeholder="Answer Text">
+            </div>
+            <div class="col">
+              <label for="createValue6" class="col-form-label">Value6</label>
+              <input type="text" class="form-control" id="createValue6" placeholder="Number of Responses">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label for="createAnswer7" class="col-form-label">Answer7</label>
+              <input type="text" class="form-control" id="createAnswer7" placeholder="Answer Text">
+            </div>
+            <div class="col">
+              <label for="createValue7" class="col-form-label">Value7</label>
+              <input type="text" class="form-control" id="createValue7" placeholder="Number of Responses">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" data-dismiss="modal" id="createSaveQuestionBtn">Create Question</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  <script src="js/admin.js"> 
+    /*$(document).ready(function() {
+
+    let selectedId = ""
+    let updateQ = null
+
+    // Load the questions on document ready
+    $.get('/questions', function(data) {
+      data.forEach( function(element) {
+        $('#questionTableBody').append(`<tr id="questionRow" data-toggle="modal" data-id=${element._id} data-target="#updateQuestionModal">
+                                          <td>${element._id}</td>
+                                          <td>${element.question}</td>
+                                        </tr>`)
+      })
+    });
+
+    // get the db ID of the row the user clicked on
+    $(document).on('click', '#questionRow', function() {
+      selectedId = $(this).data('id')
+    })
+
+    // Click handler for saving a newly created question
+    $('#createSaveQuestionBtn').click(function() {
+      let question = $('#createQuestionText').val()
+      let answers = []
+      for (i = 1; i < 8; i++) {
+        let answerText = $(`#createAnswer${i}`).val()
+        let answerValue = $(`#createValue${i}`).val()
+        if (answerText !== "" && answerValue !== "") {
+          answers.push({ "text": answerText, "value": answerValue })
+        }
+      }
+      let object = { "question": question, "answers": answers }
+      $.post('/questions', object, function(result) {
+        $('#questionTableBody').empty()
+        $.get('/questions', function(data) {
+          data.forEach( function(element) {
+            $('#questionTableBody').append(`<tr id="questionRow" data-toggle="modal" data-id=${element._id} data-target="#updateQuestionModal" >
+                                              <td>${element._id}</td>
+                                              <td>${element.question}
+                                            </td></tr>`)
+          })
+        });
+      })
+    })
+
+    // Get the pertinent data to display in the modal when the user clicks on a question
+    $('#updateQuestionModal').on('shown.bs.modal', function() { 
+      $.getJSON(`/questions/${selectedId}`, function(data) {
+        updateQ = JSON.parse(JSON.stringify(data))
+        updateQ = updateQ[0]
+        $('#questionText').val(updateQ.question)
+        let answers = updateQ.answers
+        answers.forEach(function (answer, index) {
+          let position = index + 1
+          $(`#answer${position}`).attr('value', answer.text)
+          $(`#value${position}`).attr('value', answer.value)
+        })
+      })
+    })
+    
+    // Click handler for saving changes to a question on the update question modal
+    $('#updateSaveQuestionBtn').click(function() {
+      let updateJSON = updateQuestion()
+      $.ajax({
+        url: `/questions/${selectedId}`,
+        type: 'PUT',
+        data: updateJSON,
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function(result, status) {
+            console.log(`${status}`)
+            $('#questionTableBody').empty()
+            $.get('/questions', function(data) {
+              data.forEach( function(element) {
+                $('#questionTableBody').append(`<tr id="questionRow" data-toggle="modal" data-id=${element._id} data-target="#updateQuestionModal" ><td>${element._id}</td><td>${element.question}</td></tr>`)
+                $('#updateQuestionModal').modal('hide')
+              })
+            });
+        }
+      })
+    })
+
+    // Click handler for deleting a question
+    $('#deleteBtn').click(function() {
+      $.ajax({
+        url: `/questions/${selectedId}`,
+        type: 'DELETE',
+        success: function(result, status) {
+          console.log(status)
+          $('#questionTableBody').empty()
+            $.get('/questions', function(data) {
+              data.forEach( function(element) {
+                $('#questionTableBody').append(`<tr id="questionRow" data-toggle="modal" data-id=${element._id} data-target="#updateQuestionModal">
+                                                  <td>${element._id}</td>
+                                                  <td>${element.question}</td>
+                                                </tr>`)
+              })
+            });
+        }
+      })
+    })
+
+    // Helper function to create a suitable JSON string that can be parsed by backend
+    function updateQuestion() {
+      updateQ.question = $('#questionText').val()
+      updateQ.answers.forEach( function(answer, index) {
+        let position = index + 1
+        answer.text = $(`#answer${position}`).val()
+        answer.value = $(`#value${position}`).val()
+      })
+      let retVal = { 'question': updateQ.question, 'answers': updateQ.answers }
+      return JSON.stringify(retVal)
+    }
+  })*/
+</script>
+</body>
+</html>
